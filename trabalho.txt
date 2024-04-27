@@ -1,0 +1,444 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package main;
+
+import java.util.Random;
+
+/**
+ *
+ * @author Administrator
+ */
+public class Clientes extends Thread {
+    private String nome;
+    private double saldo = 1000;
+    private Conta conta;
+    private Loja loja01;
+    private Loja loja02;
+    private Banco banco;
+    // Construtor da classe ClientesBackup
+    public Clientes(String nome, double saldo, Conta conta, Loja loja01, Loja loja02, Banco banco){
+        this.nome = nome;
+        this.saldo = saldo;
+        this.conta = conta;
+        this.saldo = 1000.00;
+        this.loja01 = loja01;
+        this.loja02 = loja02;
+        this.banco = banco;
+    }
+    public void run(){
+    Random random = new Random();
+    while (saldo > 0) {
+        // Escolhe aleatoriamente entre as duas lojas
+        Loja lojaEscolhida = random.nextBoolean() ? loja01 : loja02;
+         double valorCompra = random.nextDouble() < 0.5 ? 100.0 : 200.0;
+        
+        synchronized (this) {
+            banco.transferir(valorCompra, this.conta, lojaEscolhida.getConta());
+        }
+      
+        // Atualiza o saldo do cliente
+        saldo = this.conta.getSaldo();
+        
+        // Verifica se o saldo é suficiente para continuar comprando
+        if (saldo < valorCompra) {
+            System.out.println("Saldo insuficiente. Encerrando as compras.");
+            break;
+        }
+    }
+    System.out.println("Saldo final: " + saldo);
+}
+
+   
+    // Método que retorna a conta do cliente
+    public Conta getConta(){
+        return conta;
+    }
+    
+    // Método que define a conta do cliente
+    public void setConta (Conta conta){
+        this.conta = conta;
+    }
+    
+    // Método que retorna o nome do cliente
+    public String getNome(){
+        return nome;
+    }
+    
+    // Método que define o nome do cliente
+    public void setNome(String nome){
+        this.nome = nome;
+    }
+    
+    // Método que retorna o saldo do cliente
+    public double getSaldo(){
+        return saldo;
+    }
+    
+    // Método que define o saldo do cliente
+    public void setSaldo(){
+        this.saldo = 1000;
+    }
+  
+  
+    
+}
+
+    
+    
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package main;
+
+/**
+ *
+ * @author Administrator
+ */
+public class Banco {
+    private String nome;
+    private Clientes clientes;
+    private Conta conta;
+    private double valorCompra;
+    
+    
+    public Banco (String nome){
+        this.nome = nome;
+    }
+    public String getNome(){
+        return nome;
+    }
+    public void setNome(String nome){
+        this.nome = nome;
+    }
+    
+   public synchronized void transferir(double valorCompra, Conta pagador, Conta loja){
+    if (pagador.getSaldo() >= valorCompra ){
+       double restContaPagador = pagador.getSaldo() - valorCompra;
+       double addValorLoja = loja.getSaldo() + valorCompra;
+       pagador.setSaldo(restContaPagador);
+       loja.setSaldo(addValorLoja);
+    } else {
+        System.out.println("Erro de Transação: Saldo insuficiente");
+    }
+}
+
+}
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package main;
+
+/**
+ *
+ * @author Administrator
+ */
+public class Conta {
+    private String nome;
+    private int id;
+    private double saldo;
+    private Banco banco;
+    
+    public Conta (String nome, int id, double saldo, Banco banco){
+        this.nome = nome;
+        this.id = id;
+        this.saldo = saldo;
+        this.banco = banco;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(double saldo) {
+        this.saldo = saldo;
+    }
+
+    public Banco getBanco() {
+        return banco;
+    }
+
+    public void setBanco(Banco banco) {
+        this.banco = banco;
+    }
+    
+    
+    
+        
+    }
+    
+    
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package main;
+
+/**
+ *
+ * @author Administrator
+ */
+public class Funcionario extends Thread {
+    private String nome;
+    private Conta conta;
+    private Conta investimento;
+    private Loja loja;
+    
+    public Funcionario (String nome, Conta conta, Conta investimento, Loja loja){
+        this.nome = nome;
+        this.conta = conta;
+        this.investimento = conta;
+        this.loja = loja;
+    }
+    
+  public void run() {
+        // Implementação do método run
+        // Chame o método de pagamento da loja quando for a hora de receber o salário
+        loja.pagarFuncionario(this);
+    }
+
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Conta getConta() {
+        return conta;
+    }
+
+    public void setConta(Conta conta) {
+        this.conta = conta;
+    }
+
+    public Conta getInvestimento() {
+        return investimento;
+    }
+
+    public void setInvestimento(Conta investimento) {
+        this.investimento = investimento;
+    }
+   
+    
+    
+    
+    
+}
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package main;
+
+/**
+ *
+ * @author Administrator
+ */
+public class Loja {
+    private String nome;
+    private Conta conta;
+    private double precoProduto;
+    private double totalVendas;
+    private Banco banco;
+    
+
+    // Construtor da classe Loja
+    public Loja(String nome, Conta conta, double precoProduto,Banco banco) {
+        this.nome = nome;
+        this.conta = conta;
+        this.precoProduto = precoProduto;
+        this.totalVendas = 0.0;
+        this.banco = banco;
+        
+    }
+
+  public synchronized void pagarFuncionario(Funcionario funcionario) {
+        double salario = 1120.0;
+        double valorInvestimento = 280.0;
+
+        // Transfere o salário para a conta de salário do funcionário
+        banco.transferir(salario, conta, funcionario.getConta());
+
+        // Transfere o valor de investimento para a conta de investimento do funcionário
+        banco.transferir(valorInvestimento, conta, funcionario.getInvestimento());
+    }
+    // Métodos getters e setters
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Conta getConta() {
+        return conta;
+    }
+
+    public void setConta(Conta conta) {
+        this.conta = conta;
+    }
+
+    public double getPrecoProduto() {
+        return precoProduto;
+    }
+
+    public void setPrecoProduto(double precoProduto) {
+        this.precoProduto = precoProduto;
+    }
+}
+package main;
+
+public class tstFluxoClienteLoja {
+    public static void main(String[] args) {
+        // Criando o banco
+        Banco banco = new Banco("Banco Central");
+
+        // Criando as contas
+        Conta contaCliente = new Conta("Cliente", 1, 1000.0, banco);
+        Conta contaLoja = new Conta("Loja", 2, 0.0, banco);
+
+        // Criando as lojas
+        Loja loja1 = new Loja("Loja 1", contaLoja, 100.0, banco);
+
+        // Criando o cliente
+        Clientes cliente = new Clientes("Cliente", 1000.0, contaCliente, loja1, loja1, banco);
+
+        // Executando a simulação de compra
+        cliente.start();
+    }
+}
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
+package main;
+
+/**
+ *
+ * @author Administrator
+ */
+public class Main {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws InterruptedException {
+        //Criando todas as contas
+        
+        //Banco
+       Banco nubank = new Banco("nubank");
+       
+       //Contas
+       
+       //Contas Cliente
+       Conta cliente01 = new Conta("Joao", 1, 1000.00, nubank);
+       Conta cliente02 = new Conta("Marcos", 2, 1000.00, nubank);
+       Conta cliente03 = new Conta("Caio", 3, 1000.00, nubank);
+       Conta cliente04 = new Conta("Pedro", 4, 1000.00, nubank);
+       Conta cliente05 = new Conta("Vinicius", 5, 1000.00, nubank);
+     
+       // Conta Loja
+       Conta contaLoja01 = new Conta ("Pichau", 6, 0, nubank);
+       Conta contaLoja02 = new Conta ("Kabum", 7, 0, nubank);
+       
+       //Loja
+       Loja loja01 = new Loja ("Pichau",contaLoja01, 100.00, nubank);
+       Loja loja02 = new Loja ("Kabum", contaLoja02, 100.00, nubank);
+       
+         // Cliente
+       Clientes joao = new Clientes("Joao", 1000.00, cliente01, loja01, loja02, nubank);
+       Clientes marcos = new Clientes("Marcos", 1000.00, cliente02, loja01, loja02, nubank);
+       Clientes caio = new Clientes("Caio", 1000.00, cliente03, loja01, loja02, nubank);
+       Clientes pedro = new Clientes("Pedro", 1000.00, cliente04, loja01, loja02, nubank);
+       Clientes vinicius = new Clientes("Vinicius", 1000.00, cliente05, loja01, loja02, nubank);
+       
+       // Conta salarios funcionarios salario
+       Conta salarioFuncionario01 = new Conta ("Marcelo", 8, 0, nubank);
+       Conta salarioFuncionario02 = new Conta ("Fabiana", 8, 0, nubank);
+       Conta salarioFuncionario03 = new Conta ("Lucas", 10, 0 ,nubank);
+       Conta salarioFuncionario04 = new Conta ("Raquel", 11, 0, nubank);
+       
+       // Conta funcionarios investimentos
+       Conta investimentoFuncionario01 = new Conta ("Marcelo", 12, 0, nubank);
+       Conta investimentoFuncionario02 = new Conta ("Fabiana", 13, 0, nubank);
+       Conta investimentoFuncionario03 = new Conta ("Lucas", 14, 0, nubank);
+       Conta investimentoFuncionario04 = new Conta ("Raquel", 15, 0, nubank);
+       
+       //Funcionarios
+       Funcionario funcionario01 = new Funcionario ("Marcelo", salarioFuncionario01, investimentoFuncionario01, loja01);
+       Funcionario funcionario02 = new Funcionario ("Fabiana", salarioFuncionario02, investimentoFuncionario02, loja01);
+       Funcionario funcionario03 = new Funcionario ("Lucas", salarioFuncionario03,investimentoFuncionario03, loja02);
+       Funcionario funcionario04 = new Funcionario ("Raquel", salarioFuncionario04, investimentoFuncionario04, loja02);
+        
+       System.out.println("saldo Joao: "+ joao.getConta().getSaldo());
+        joao.start();
+        joao.join();
+        
+        System.out.println("Saldo Marcos: "+ marcos.getConta() .getSaldo());
+        marcos.start();
+        marcos.join();
+        
+        System.out.println("Saldo Caio: "+ caio.getConta() .getSaldo());
+        caio.start();
+        caio.join();
+        
+        System.out.println("Saldo Pedro: "+ pedro.getConta() .getSaldo());
+        pedro.start();
+        pedro.join();
+        
+        System.out.println("Saldo Vinicius: "+ pedro.getConta() .getSaldo());
+        vinicius.start();
+        vinicius.join();
+        
+        System.out.println("Loja: "+ loja01.getNome() + "Saldo: "+contaLoja01.getSaldo());
+        System.out.println("Loja: "+ loja02.getNome() + "Saldo: "+contaLoja02.getSaldo());
+        
+        System.out.println("Saldo do Funcionário " + funcionario01.getNome() + ": " + salarioFuncionario01.getSaldo());
+        System.out.println("Saldo do Funcionário " + funcionario02.getNome() + ": " + salarioFuncionario02.getSaldo());
+        System.out.println("Saldo do Funcionário " + funcionario03.getNome() + ": " + salarioFuncionario03.getSaldo());
+        System.out.println("Saldo do Funcionário " + funcionario04.getNome() + ": " + salarioFuncionario04.getSaldo());
+
+        // Exibindo saldo dos investimentos dos funcionários
+        System.out.println("Saldo do Investimento do Funcionário " + funcionario01.getNome() + ": " + investimentoFuncionario01.getSaldo());
+        System.out.println("Saldo do Investimento do Funcionário " + funcionario02.getNome() + ": " + investimentoFuncionario02.getSaldo());
+        System.out.println("Saldo do Investimento do Funcionário " + funcionario03.getNome() + ": " + investimentoFuncionario03.getSaldo());
+        System.out.println("Saldo do Investimento do Funcionário " + funcionario04.getNome() + ": " + investimentoFuncionario04.getSaldo());
+        
+        
+        
+       } 
+}
+        
+    
+
+      
+       
+        
+        
+        
+    
+    
+
